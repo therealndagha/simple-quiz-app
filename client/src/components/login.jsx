@@ -93,6 +93,11 @@ const Login = () => {
           </button>
         </div>
       </form>
+
+      <div className="text-center">
+         <button onClick={()=>navigate('/register')} className="text-blue-500 mt-3">Don't have an account ? Click Here</button>
+      </div>
+
     </div>
   );
 };

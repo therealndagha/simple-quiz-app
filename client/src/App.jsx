@@ -1,6 +1,8 @@
+import AddQuestions from "./components/addQuestions"
 import Dashboard from "./components/dashboard"
 import Login from "./components/login"
 import { Routes , Route} from "react-router-dom"
+import RegisterUser from "./components/register"
 
 function App() {
    
@@ -11,6 +13,8 @@ function App() {
         <Routes>
             <Route path="/" element={<Login/>}/>
             <Route path = '/dashboard' element ={<Dashboard/>} />
+            <Route path="/add-questions" element={<AddQuestions/>}/>
+            <Route path="/register" element={<RegisterUser/>}/>
         </Routes>
       </div>
     </>
