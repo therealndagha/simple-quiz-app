@@ -3,13 +3,14 @@ import { useEffect,useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-const QuestionTile = ({question , passCount, setPassCount}) =>{
+
+const QuestionTile = ({question , passCount, data, setPassCount}) =>{
     
     const [isCorrectAnswer, setIsCorrectAnswer] = useState(false)
     const [buttonIsClicked , setButtonIsclicked] = useState(false)
     const [message, setMessage] = useState(null)
    
-
+      const submitResultURL = `http://127.0.0.1:3000/quiz/submit-result/${question._id}`;
     const submitAnswer = (selectedAnswer)=>{
       //console.log(selectedAnswer)
       setButtonIsclicked(true)
@@ -22,12 +23,31 @@ const QuestionTile = ({question , passCount, setPassCount}) =>{
         setIsCorrectAnswer(false)
         setMessage('Incorrect')
        }
+
+       const dataToBeSubmitted = {
+          submittedAnswer: selectedAnswer, quizId: '67c6c9ba3c60666400663f50', hasPassedThisQuestion: isCorrectAnswer, 
+          studentId : data.id
+       }
+       
+       
+      axios.post(`${submitResultURL}`, dataToBeSubmitted, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization : `Bearer ${JSON.parse(localStorage.getItem('accessToken'))}`
+        }
+      } ).then(response =>{
+        console.log(response.data)
+      }).catch(error=> console.log(error.response.data))
+
     }
+     
+    
+
      return  <div className="p-3 m-3 shadow">
          <h2 className="text-2xl">{question.questionText}</h2>
 
           
-
+           
          <div>
               {
                 question?.options && question?.options?.length > 0 ? question.options.map((singleOption, index)=> <div  key={index}>
@@ -54,6 +74,10 @@ const Dashboard = () =>{
     const [passCount, setPassCount] = useState(0);
     
     const [gradeMessage, setGradeMessage] = useState("")
+    
+    const [data, setData] = useState(null)
+    
+
 
     const logoutUser = () =>{
         localStorage.removeItem('accessToken');
@@ -71,9 +95,15 @@ const Dashboard = () =>{
         }
 
            try {
-             axios.get('http://127.0.0.1:3000/quiz/questions/67c6c9ba3c60666400663f50').then(response => {
-                //console.log(response.data);
-                setQuestions(response.data)
+             axios.get('http://127.0.0.1:3000/quiz/questions/67c6c9ba3c60666400663f50', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+             }).then(response => {
+                console.log(response.data);
+                setData(response.data.decodedTokenInfo)
+                setQuestions(response.data.questions)
              }).catch(error => console.log(error))
            } catch (error) {
             console.log(error)
@@ -93,7 +123,8 @@ const Dashboard = () =>{
         console.log('You fail')
         setGradeMessage(`You fail!!, score: ${finalGrade}`)
     }
-
+     
+   
     
    }
 
@@ -107,7 +138,7 @@ const Dashboard = () =>{
             <div className="p-3 shadow border m-4">
                  <div className="d-flex justify-content-between flex-wrap">
                  {
-                    questions && questions.length > 0 ? questions.map( (question) => <QuestionTile key={question._id} question={question} setPassCount ={setPassCount} passCount ={passCount} />  ) : <p>Please add some questions.</p>
+                    questions && questions.length > 0 ? questions.map( (question) => <QuestionTile key={question._id} data={data} question={question} setPassCount ={setPassCount} passCount ={passCount} />  ) : <p>Please add some questions.</p>
                  }
 
                  </div>

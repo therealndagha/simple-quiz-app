@@ -5,7 +5,8 @@ const express = require('express');
 const authenticated = require('../middleware/authenticated');
 const roleChecker = require('../middleware/roleChecker');
 const Question = require('../models/questions');
-const Quiz = require('../models/quiz')
+const Quiz = require('../models/quiz');
+const Result = require('../models/results');
 const router = express.Router();
 
 
@@ -41,10 +42,16 @@ router.post("/questions",authenticated, roleChecker, async (req, res) => {
 
 
 //get questions from a quiz
-router.get("/questions/:quizId", async (req, res) => {
+router.get("/questions/:quizId", authenticated, async (req, res) => {
     try {
+      const decodedTokenInfo = req.user
       const questions = await Question.find({ quizId: req.params.quizId });
-      res.json(questions);
+      res.json({
+        success:true, 
+        message: 'here are the questions',
+        questions,
+        decodedTokenInfo
+      });
     } catch (error) {
       res.status(500).json({ message: "Error fetching questions", error });
     }
@@ -64,6 +71,7 @@ router.get("/questions/:quizId", async (req, res) => {
   });
 
 
+
  //submit an answer  
   router.post("/submit-answer", async (req, res) => {
     try {
@@ -79,8 +87,38 @@ router.get("/questions/:quizId", async (req, res) => {
     }
   });
 
-  
+  //submit results
 
+  
+   router.post('/submit-result/:questionId', authenticated, async(req,res)=>{
+      try {
+         const {submittedAnswer, quizId, hasPassedThisQuestion, studentId} = req.body;
+         const {questionId} = req.params;
+         //console.log(questionId)
+         console.log('studentId', studentId);
+         if(!submittedAnswer|| !studentId || !quizId){
+          return res.status(400).json({
+            success:false,
+            message: 'all fields are mandatory.'
+          })
+         }
+         const newlyCreatedResult = await Result.create({
+          quizId, questionId, studentId, submittedAnswer, hasPassedThisQuestion
+         });
+         
+         if(newlyCreatedResult){
+          return res.status(201).json({
+            success:true,
+            message:'Result created successfully',
+            newlyCreatedResult
+          })
+         }
+
+      } catch (error) {
+        console.log('error when submitting answer', error);
+        return res.status(500).json({success:false, message: 'Error submitting answer', error})
+      }
+   })
 
 
 
