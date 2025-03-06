@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect,useState } from "react";
+import { useContext, useEffect,useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { QuizAppContext } from "../../context";
 
 
 const QuestionTile = ({question , passCount, data, setPassCount}) =>{
@@ -9,9 +9,11 @@ const QuestionTile = ({question , passCount, data, setPassCount}) =>{
     const [isCorrectAnswer, setIsCorrectAnswer] = useState(false)
     const [buttonIsClicked , setButtonIsclicked] = useState(false)
     const [message, setMessage] = useState(null)
+
+    
    
       const submitResultURL = `http://127.0.0.1:3000/quiz/submit-result/${question._id}`;
-    const submitAnswer = (selectedAnswer)=>{
+    const submitAnswer = (selectedAnswer) => {
       //console.log(selectedAnswer)
       setButtonIsclicked(true)
        if(question.correctAnswer === selectedAnswer){
@@ -25,7 +27,7 @@ const QuestionTile = ({question , passCount, data, setPassCount}) =>{
        }
 
        const dataToBeSubmitted = {
-          submittedAnswer: selectedAnswer, quizId: '67c6c9ba3c60666400663f50', hasPassedThisQuestion: isCorrectAnswer, 
+          submittedAnswer: selectedAnswer, quizId: '67c98f91753f46980687a163', hasPassedThisQuestion: isCorrectAnswer, 
           studentId : data.id
        }
        
@@ -58,7 +60,7 @@ const QuestionTile = ({question , passCount, data, setPassCount}) =>{
               }
 
 
-<div className="text-center m-3 p-3">
+<div className="text-center m-3 p-3"> 
                         {buttonIsClicked ?  <p style={{color : isCorrectAnswer ? 'green' : 'red'}}>{message}</p>  : null }
                       </div>
          </div>
@@ -95,7 +97,7 @@ const Dashboard = () =>{
         }
 
            try {
-             axios.get('http://127.0.0.1:3000/quiz/questions/67c6c9ba3c60666400663f50', {
+             axios.get('http://127.0.0.1:3000/quiz/questions/67c98f91753f46980687a163', {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`

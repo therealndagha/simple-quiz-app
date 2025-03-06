@@ -95,7 +95,7 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
          const {submittedAnswer, quizId, hasPassedThisQuestion, studentId} = req.body;
          const {questionId} = req.params;
          //console.log(questionId)
-         console.log('studentId', studentId);
+         //console.log('studentId', studentId);
          if(!submittedAnswer|| !studentId || !quizId){
           return res.status(400).json({
             success:false,
@@ -106,6 +106,8 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
           quizId, questionId, studentId, submittedAnswer, hasPassedThisQuestion
          });
          
+        
+        
          if(newlyCreatedResult){
           return res.status(201).json({
             success:true,

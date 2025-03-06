@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { QuizAppContext } from "../../context";
 
 const AddQuestions = () => {
   const navigate = useNavigate();
+
+  const {createQuizFormData,  handleCreateQuizSubmit, createdQuizData, handleOnChangeCreateQuiz} = useContext(QuizAppContext);
+
+  
+  
 
   const logoutUser = () =>{
      localStorage.removeItem('accessToken');
@@ -11,7 +17,6 @@ const AddQuestions = () => {
   }
 
   const [question, setQuestion] = useState({
-    quizId: "67c6c9ba3c60666400663f50",
     questionText: "",
     correctAnswer: "",
   });
@@ -80,10 +85,10 @@ const AddQuestions = () => {
     const { option1, option2, option3, option4 } = options;
     const updatedOptions = [option1, option2, option3, option4];
 
-    const { quizId, questionText, correctAnswer } = question;
+    const {questionText, correctAnswer } = question;
 
     const requestData = {
-      quizId,
+      quizId : createQuizFormData.id,
       questionText,
       options: updatedOptions,
       correctAnswer,
@@ -111,6 +116,22 @@ const AddQuestions = () => {
 
   return (
     <>
+        <div className="p-3 m-3">
+            <h2 className="text-2xl">Create Quiz</h2>
+             <form onSubmit={handleCreateQuizSubmit}>
+                 <div className="m-3 p-3 text-center shadow border">
+                    <input type="text" name="title" value={createQuizFormData.title} onChange={handleOnChangeCreateQuiz} placeholder="Enter quiz title" className="p-3" required/>
+                 </div>
+
+                 <div className="m-3 p-3 text-center shadow border">
+                    <input type="text" name="description" value={createQuizFormData.description} onChange={handleOnChangeCreateQuiz} placeholder="Enter quiz description" className="p-3" required/>
+                 </div>
+                      <div className="text-center"> 
+                          <button type="submit" className="bg-blue-500 hover:bg-blue-800 rounded px-3 mx-3 text-white">Submit</button>
+                      </div>
+             </form>
+        </div>
+      
       <h2 className="text-2xl">Add Questions</h2>
 
 
@@ -124,7 +145,7 @@ const AddQuestions = () => {
             onChange={handleOnChange}
             name="quizId"
             placeholder="Enter quizId"
-            value={question.quizId}
+            value={createdQuizData.id}
           />
         </div>
 
