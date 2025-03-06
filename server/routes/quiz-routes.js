@@ -8,6 +8,14 @@ const Question = require('../models/questions');
 const Quiz = require('../models/quiz')
 const router = express.Router();
 
+
+router.get('/protected', authenticated, roleChecker ,async(req, res)=>{
+     res.status(200).json({
+      success:true,
+      message: 'admin route reached.'
+     })
+});
+
 // Create a new question
 router.post("/questions",authenticated, roleChecker, async (req, res) => {
   try {

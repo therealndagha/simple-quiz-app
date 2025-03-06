@@ -25,6 +25,14 @@ const AddQuestions = () => {
     try {
       const token = JSON.parse(storedToken);
       setAccess(token);
+      axios.get('http://127.0.0.1:3000/quiz/protected', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }).then(response => console.log(response.data)).catch(error => {console.log(error.response.data)
+        navigate('/')
+      })
     } catch (error) {
       console.error("Error parsing token:", error);
       navigate("/");
