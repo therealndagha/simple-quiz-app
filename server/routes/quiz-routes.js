@@ -20,6 +20,17 @@ router.get('/protected', authenticated, roleChecker ,async(req, res)=>{
 router.post("/questions",authenticated, roleChecker, async (req, res) => {
   try {
     const { quizId, questionText, options, correctAnswer } = req.body;
+   
+    const findQuestionIfExists = await Question.findOne({questionText});
+
+    if(findQuestionIfExists){
+      return res.status(400).json({
+        success:false,
+        message: 'question was already added, please add another question.'
+      })
+    }
+     
+        
     const newQuestion = new Question({ quizId, questionText, options, correctAnswer });
     await newQuestion.save();
     res.status(201).json({ message: "Question created successfully", newQuestion });

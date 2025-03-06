@@ -5,11 +5,18 @@ import { useNavigate } from "react-router-dom";
 const AddQuestions = () => {
   const navigate = useNavigate();
 
+  const logoutUser = () =>{
+     localStorage.removeItem('accessToken');
+     navigate('/')
+  }
+
   const [question, setQuestion] = useState({
     quizId: "67c6c9ba3c60666400663f50",
     questionText: "",
     correctAnswer: "",
   });
+
+  const [errMessage, setErrMessage] = useState(null)
 
   const [access, setAccess] = useState(null);
    
@@ -92,17 +99,24 @@ const AddQuestions = () => {
     try {
       const response = await axios.post(addQuestions_url, requestData, config);
       console.log("Response:", response.data);
+      setErrMessage(null)
     } catch (error) {
       console.error(
         "Error submitting question:",
         error.response ? error.response.data : error.message
       );
+      setErrMessage(error.response.data.message)
     }
   };
 
   return (
     <>
       <h2 className="text-2xl">Add Questions</h2>
+
+
+      {
+        errMessage ? <p className="text-red-500">{errMessage}</p> : null
+      }
       <form onSubmit={handleSubmit}>
         <div className="m-3 p-3 text-center shadow border">
           <input
@@ -195,6 +209,10 @@ const AddQuestions = () => {
           </button>
         </div>
       </form>
+
+      <div className="text-center mt-3">
+          <button onClick={logoutUser} className="bg-blue-500 text-white px-3 mx-3 hover:bg-blue-800 rounded">logout</button>
+      </div>
     </>
   );
 };

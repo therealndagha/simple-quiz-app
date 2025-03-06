@@ -75,6 +75,10 @@ const Dashboard = () =>{
     return <>
         <div className="p-3">
             <h2 className="text-3xl">Dashboard</h2>
+
+            <div className="text-center">
+                <a onClick={()=>navigate('/add-questions')} className="text-blue-500">access add questions route</a>
+            </div>
             <div className="p-3 shadow border m-4">
                  <div className="d-flex justify-content-between flex-wrap">
                  {
