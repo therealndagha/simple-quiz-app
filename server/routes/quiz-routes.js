@@ -70,7 +70,26 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
     }
   });
 
+//get quizzes
 
+  router.get("/get-quizzes", authenticated,  async(req,res)=>{
+    try {
+      const quizList = await Quiz.find({});
+      if(quizList?.length === 0){
+        return res.status(404).json({
+          success:false,
+          message: 'no quiz has been added yet please add some quizzes'
+        })
+      }
+      return res.status(200).json({
+        success:true,
+        quizList
+      })
+    } catch (error) {
+       console.log(error);
+       return res.status(500).json({success:false, message:'Error getting quizzes', error});
+    }
+  })
 
  //submit an answer  
   router.post("/submit-answer", async (req, res) => {
@@ -103,7 +122,7 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
           })
          }
          const newlyCreatedResult = await Result.create({
-          quizId, questionId, studentId, submittedAnswer, hasPassedThisQuestion
+          quizId, questionId, studentId, submittedAnswer, hasPassedThisQuestion 
          });
          
         
