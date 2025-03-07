@@ -46,7 +46,16 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
     try {
       const decodedTokenInfo = req.user
       const questions = await Question.find({ quizId: req.params.quizId });
-      res.json({
+      if(questions?.length === 0)
+      {
+        return res.json(
+          {
+            success:false,
+            message:'no questions found'
+          }
+        )
+      }
+     return  res.json({
         success:true, 
         message: 'here are the questions',
         questions,

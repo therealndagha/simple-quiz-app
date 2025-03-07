@@ -35,7 +35,7 @@ const Login = () => {
       // Redirect to dashboard
       navigate("/dashboard");
 
-      console.log("Login Successful:", response.data);
+      //console.log("Login Successful:", response.data);
     } catch (error) {
       setMessage(
         error.response?.data?.message || "Invalid credentials. Please try again."

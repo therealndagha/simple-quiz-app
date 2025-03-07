@@ -90,7 +90,7 @@ const AddQuestions = () => {
     const {questionText, correctAnswer } = question;
 
     const requestData = {
-      quizId : createQuizFormData.id,
+      quizId,
       questionText,
       options: updatedOptions,
       correctAnswer,
@@ -105,6 +105,7 @@ const AddQuestions = () => {
 
     try {
       const response = await axios.post(addQuestions_url, requestData, config);
+      
       console.log("Response:", response.data);
       setErrMessage(null)
     } catch (error) {
@@ -119,103 +120,7 @@ const AddQuestions = () => {
   return (
     <>
 
-    
-      <h2 className="text-2xl">Add Questions</h2>
-
-
-      {
-        errMessage ? <p className="text-red-500">{errMessage}</p> : null
-      }
-      <form onSubmit={handleSubmit}>
-        <div className="m-3 p-3 text-center shadow border">
-              <p>{currentQuiz?.title}</p>
-        </div>
-
-        <div className="m-3 p-3 text-center shadow border">
-          <input
-            type="text"
-            className="w-full p-2 text-center"
-            onChange={handleOnChange}
-            name="questionText"
-            placeholder="Enter question"
-            value={question.questionText}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option1"
-            placeholder="Enter option 1"
-            value={options.option1}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option2"
-            placeholder="Enter option 2"
-            value={options.option2}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option3"
-            placeholder="Enter option 3"
-            value={options.option3}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option4"
-            placeholder="Enter option 4"
-            value={options.option4}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow border">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOnChange}
-            name="correctAnswer"
-            placeholder="Enter correct answer"
-            value={question.correctAnswer}
-            required
-          />
-        </div>
-
-        <div className="text-center">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-800 text-white px-3 mx-3 rounded"
-          >
-            Submit Question
-          </button>
-        </div>
-      </form>
-
-     
-              <div>
-                      <h2 className="text-2xl">Add Questions</h2>
+     <h2 className="text-2xl">Add Questions</h2>
        
       
 
@@ -309,7 +214,7 @@ const AddQuestions = () => {
          </div>
        </form>
                   
-              </div>
+            
        
       
 

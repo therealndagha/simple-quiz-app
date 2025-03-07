@@ -11,8 +11,9 @@ const QuizContextProvider = ({children}) =>{
        const [token, setToken] = useState(null);
        const navigate = useNavigate();
        const [config, setConfig] = useState({});
-       const [quizzes, setQuizzes] = useState([])
-       const [currentQuiz, setCurrentQuiz] = useState({})
+       const [quizzes, setQuizzes] = useState([]);
+       const [currentQuiz, setCurrentQuiz] = useState({});
+       const [questions, setQuestions] = useState([])
 
        useEffect(() => {
         const getTokenFromLocalStorage = localStorage.getItem('accessToken');
@@ -59,7 +60,7 @@ const QuizContextProvider = ({children}) =>{
       
 
     return (
-        <QuizContext.Provider value={{submitCreateQuizFormData, handleOnChangeCreateQuizFormData, createQuizFormData, config, quizzes, setQuizzes, navigate, currentQuiz, setCurrentQuiz}}>
+        <QuizContext.Provider value={{submitCreateQuizFormData,questions, setQuestions, handleOnChangeCreateQuizFormData, createQuizFormData, config, quizzes, setQuizzes, navigate, currentQuiz, setCurrentQuiz}}>
             {children}
         </QuizContext.Provider>
     )
