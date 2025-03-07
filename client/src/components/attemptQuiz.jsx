@@ -12,7 +12,7 @@ const AttemptQuiz = () => {
 
     const {currentQuiz, questions, setQuestions, config} = useContext(QuizContext);
      const params = useParams();
-
+        
      //console.log(params)
      useEffect(()=>{
         if(config){
@@ -27,11 +27,20 @@ const AttemptQuiz = () => {
         }
      }, [config, params])
 
+     const submitForGrading = () => {
+        const totalNumberOfQuestions = questions?.length;
+        console.log(totalNumberOfQuestions)
+
+    }
+
     return <div className="p-3 m-3">
          <h1 className="text-2xl">Attempt Quiz : {currentQuiz?.title }</h1>
          {
             questions && questions.length > 0 ? questions.map(singleQuestion => <QuestionTile key={singleQuestion?._id} singleQuestion={singleQuestion} /> ) : null
          }
+         <div className="text-center p-3">
+              <button onClick={submitForGrading} className="rounded bg-blue-500 hover:bg-blue-800 text-white px-4 py-2">Submit For Grading</button>
+         </div>
     </div>
 }
 

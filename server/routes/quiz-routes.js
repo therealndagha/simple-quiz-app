@@ -104,6 +104,7 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
   router.post("/submit-answer", async (req, res) => {
     try {
       const { questionId, selectedAnswer } = req.body;
+      const decodedTokenInfo = req.user;
       const question = await Question.findById(questionId);
   
       if (!question) return res.status(404).json({ message: "Question not found" });
@@ -120,7 +121,9 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
   
    router.post('/submit-result/:questionId', authenticated, async(req,res)=>{
       try {
-         const {submittedAnswer, quizId, hasPassedThisQuestion, studentId} = req.body;
+         const {submittedAnswer, quizId, hasPassedThisQuestion} = req.body;
+         const decodedTokenInfo = req.user;
+         const studentId = decodedTokenInfo.id;
          const {questionId} = req.params;
          //console.log(questionId)
          //console.log('studentId', studentId);
@@ -149,6 +152,7 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
         return res.status(500).json({success:false, message: 'Error submitting answer', error})
       }
    })
+
 
 
 
