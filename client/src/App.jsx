@@ -3,6 +3,7 @@ import Dashboard from "./components/dashboard"
 import Login from "./components/login"
 import { Routes , Route} from "react-router-dom"
 import RegisterUser from "./components/register"
+import Admin from "./components/admin"
 
 function App() {
    
@@ -13,8 +14,9 @@ function App() {
         <Routes>
             <Route path="/" element={<Login/>}/>
             <Route path = '/dashboard' element ={<Dashboard/>} />
-            <Route path="/add-questions" element={<AddQuestions/>}/>
+            <Route path="/add-questions/:quizId" element={<AddQuestions/>}/>
             <Route path="/register" element={<RegisterUser/>}/>
+            <Route path="/admin" element ={<Admin/>} />
         </Routes>
       </div>
     </>

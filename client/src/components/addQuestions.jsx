@@ -1,17 +1,22 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { QuizContext } from "../context";
 
 const AddQuestions = () => {
   const navigate = useNavigate();
-
+  const params = useParams();
+  const {currentQuiz} = useContext(QuizContext)
+  const {quizId} = params;
+  //console.log('quizId: ', quizId);
   const logoutUser = () =>{
      localStorage.removeItem('accessToken');
      navigate('/')
   }
 
   const [question, setQuestion] = useState({
-    quizId: "67c6c9ba3c60666400663f50",
+    quizId,
     questionText: "",
     correctAnswer: "",
   });
@@ -111,104 +116,105 @@ const AddQuestions = () => {
 
   return (
     <>
-      <h2 className="text-2xl">Add Questions</h2>
+     
+              <div>
+                      <h2 className="text-2xl">Add Questions</h2>
+       
+      
 
-
-      {
-        errMessage ? <p className="text-red-500">{errMessage}</p> : null
-      }
-      <form onSubmit={handleSubmit}>
-        <div className="m-3 p-3 text-center shadow border">
-          <input
-            type="text"
-            onChange={handleOnChange}
-            name="quizId"
-            placeholder="Enter quizId"
-            value={question.quizId}
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow border">
-          <input
-            type="text"
-            className="w-full p-2 text-center"
-            onChange={handleOnChange}
-            name="questionText"
-            placeholder="Enter question"
-            value={question.questionText}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option1"
-            placeholder="Enter option 1"
-            value={options.option1}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option2"
-            placeholder="Enter option 2"
-            value={options.option2}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option3"
-            placeholder="Enter option 3"
-            value={options.option3}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOptionsOnChange}
-            name="option4"
-            placeholder="Enter option 4"
-            value={options.option4}
-            required
-          />
-        </div>
-
-        <div className="m-3 p-3 text-center shadow border">
-          <input
-            type="text"
-            className="p-2"
-            onChange={handleOnChange}
-            name="correctAnswer"
-            placeholder="Enter correct answer"
-            value={question.correctAnswer}
-            required
-          />
-        </div>
-
-        <div className="text-center">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-800 text-white px-3 mx-3 rounded"
-          >
-            Submit Question
-          </button>
-        </div>
-      </form>
+       {
+         errMessage ? <p className="text-red-500">{errMessage}</p> : null
+       }
+       <form onSubmit={handleSubmit}>
+         <div className="m-3 p-3 text-center shadow border">
+             <p>{currentQuiz?.title}</p>
+         </div>
+ 
+         <div className="m-3 p-3 text-center shadow border">
+           <input
+             type="text"
+             className="w-full p-2 text-center"
+             onChange={handleOnChange}
+             name="questionText"
+             placeholder="Enter question"
+             value={question.questionText}
+             required
+           />
+         </div>
+ 
+         <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
+           <input
+             type="text"
+             className="p-2"
+             onChange={handleOptionsOnChange}
+             name="option1"
+             placeholder="Enter option 1"
+             value={options.option1}
+             required
+           />
+         </div>
+ 
+         <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
+           <input
+             type="text"
+             className="p-2"
+             onChange={handleOptionsOnChange}
+             name="option2"
+             placeholder="Enter option 2"
+             value={options.option2}
+             required
+           />
+         </div>
+ 
+         <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
+           <input
+             type="text"
+             className="p-2"
+             onChange={handleOptionsOnChange}
+             name="option3"
+             placeholder="Enter option 3"
+             value={options.option3}
+             required
+           />
+         </div>
+ 
+         <div className="m-3 p-3 text-center shadow-md bg-slate-50 hover:bg-slate-100">
+           <input
+             type="text"
+             className="p-2"
+             onChange={handleOptionsOnChange}
+             name="option4"
+             placeholder="Enter option 4"
+             value={options.option4}
+             required
+           />
+         </div>
+ 
+         <div className="m-3 p-3 text-center shadow border">
+           <input
+             type="text"
+             className="p-2"
+             onChange={handleOnChange}
+             name="correctAnswer"
+             placeholder="Enter correct answer"
+             value={question.correctAnswer}
+             required
+           />
+         </div>
+ 
+         <div className="text-center">
+           <button
+             type="submit"
+             className="bg-blue-500 hover:bg-blue-800 text-white px-3 mx-3 rounded"
+           >
+             Submit Question
+           </button>
+         </div>
+       </form>
+                  
+              </div>
+       
+      
 
       <div className="text-center mt-3">
           <button onClick={logoutUser} className="bg-blue-500 text-white px-3 mx-3 hover:bg-blue-800 rounded">logout</button>

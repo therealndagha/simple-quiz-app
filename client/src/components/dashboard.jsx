@@ -101,7 +101,7 @@ const Dashboard = () =>{
                     Authorization: `Bearer ${token}`
                 }
              }).then(response => {
-                console.log(response.data);
+                //console.log(response.data);
                 setData(response.data.decodedTokenInfo)
                 setQuestions(response.data.questions)
              }).catch(error => console.log(error))
@@ -133,7 +133,7 @@ const Dashboard = () =>{
             <h2 className="text-3xl">Dashboard</h2>
 
             <div className="text-center">
-                <a onClick={()=>navigate('/add-questions')} className="text-blue-500">access add questions route</a>
+                <a onClick={()=>navigate('/admin')} className="text-blue-500">Admin Dashboard</a>
             </div>
             <div className="p-3 shadow border m-4">
                  <div className="d-flex justify-content-between flex-wrap">
