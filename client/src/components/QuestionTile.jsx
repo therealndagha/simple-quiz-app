@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from 'axios'
+import { QuizContext } from "../context";
 
 const QuestionTile = ({singleQuestion}) =>{
    // console.log(singleQuestion)
     let hasPassedThisQuestion = false;
     const submitResultURL = `http://127.0.0.1:3000/quiz/submit-result/${singleQuestion?._id}`;
-    
+    const {totalPoints, setTotalPoints} = useContext(QuizContext);
     const [isClicked, setIsClicked] = useState(false)
 
     const selectedAnswer = (userSelectedAnswer) =>{
@@ -14,6 +15,10 @@ const QuestionTile = ({singleQuestion}) =>{
         const {correctAnswer} = singleQuestion;
         if(userSelectedAnswer === correctAnswer){
             hasPassedThisQuestion = true
+            setTotalPoints(prevTotalPoints => {
+                const newPoints = prevTotalPoints+1;
+                return newPoints
+            })
         }
         else{
             hasPassedThisQuestion = false
@@ -38,6 +43,7 @@ const QuestionTile = ({singleQuestion}) =>{
          }).then(response => console.log(response.data)).catch(error => console.log(error.response.data))
     }
           
+    
     
 
               //console.log(hasPassedThisQuestion)

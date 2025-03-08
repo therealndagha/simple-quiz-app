@@ -10,7 +10,9 @@ const AttemptQuiz = () => {
 
     
 
-    const {currentQuiz, questions, setQuestions, config} = useContext(QuizContext);
+    const {currentQuiz, questions, setQuestions, config, totalPoints, finalGrade, setFinalGrade} = useContext(QuizContext);
+    const [readyToSubmit, setReadyToSubmit] = useState(false)
+     
      const params = useParams();
         
      //console.log(params)
@@ -28,10 +30,39 @@ const AttemptQuiz = () => {
      }, [config, params])
 
      const submitForGrading = () => {
-        const totalNumberOfQuestions = questions?.length;
-        console.log(totalNumberOfQuestions)
-
+        setReadyToSubmit(true);
+         
     }
+    
+    useEffect(() => {
+        if (readyToSubmit) {
+            const totalQuestions = questions.length;
+            const newGradeFinal = (totalPoints / totalQuestions) * 100;
+    
+            axios.post(`http://127.0.0.1:3000/quiz/submit-finalGrade/${params.quizId}`, {
+                finalGrade: newGradeFinal
+            }, config).then(response => {
+                 let examStatus = '';
+                  const usersGrade = response.data.newlyCreatedGrade.finalGrade;
+                  if(usersGrade >= 50){
+                    examStatus = 'You Pass'
+                  }
+                  else{
+                    examStatus = 'You Fail'
+                  }
+                console.log(response.data)
+                  
+                alert(`your grade is : ${usersGrade}, ${examStatus}`)
+            })
+              .catch(error => console.log(error.response.data));
+    
+            setFinalGrade(newGradeFinal);
+            setReadyToSubmit(false); 
+        }
+    }, [readyToSubmit]); 
+    
+
+
 
     return <div className="p-3 m-3">
          <h1 className="text-2xl">Attempt Quiz : {currentQuiz?.title }</h1>

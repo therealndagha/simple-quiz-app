@@ -7,6 +7,7 @@ const roleChecker = require('../middleware/roleChecker');
 const Question = require('../models/questions');
 const Quiz = require('../models/quiz');
 const Result = require('../models/results');
+const Grade = require('../models/grade');
 const router = express.Router();
 
 
@@ -116,6 +117,8 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
     }
   });
 
+
+
   //submit results
 
   
@@ -154,7 +157,32 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
    })
 
 
+   
+//submit grade 
 
+router.post('/submit-finalgrade/:quizId', authenticated, async(req,res)=>{
+    try {
+      const decodedTokenInfo = req.user;
+      const studentId = decodedTokenInfo.id;
+      const {quizId} = req.params;
+      const {finalGrade} = req.body;
+      const newlyCreatedGrade = await Grade.create({studentId, quizId, finalGrade});
+      if(newlyCreatedGrade){
+        return res.status(201).json({
+          success:true,
+          message: 'grade saved successfully',
+          newlyCreatedGrade
+        })
+      }
+    } catch (error) {
+       console.log('error while submitting grade' , error);
+       return res.status(500).json({
+        success:false,
+        message:'something went wrong while submitting the finalGrade',
+        error
+       })
+    }
+})
 
 
 module.exports = router;
