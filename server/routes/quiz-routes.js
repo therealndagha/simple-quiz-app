@@ -128,6 +128,7 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
          const decodedTokenInfo = req.user;
          const studentId = decodedTokenInfo.id;
          const {questionId} = req.params;
+         
          //console.log(questionId)
          //console.log('studentId', studentId);
          if(!submittedAnswer|| !studentId || !quizId){
@@ -135,6 +136,13 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
             success:false,
             message: 'all fields are mandatory.'
           })
+         }
+         const findResultOfStudentWhoAlreadySubmittedThisResult = await Result.findOne({studentId, questionId,quizId});
+         if(findResultOfStudentWhoAlreadySubmittedThisResult){
+           return res.status(400).json({
+            success:false,
+            message: 'You already attempted this quiz, please try another quiz'
+           })
          }
          const newlyCreatedResult = await Result.create({
           quizId, questionId, studentId, submittedAnswer, hasPassedThisQuestion 
@@ -166,6 +174,14 @@ router.post('/submit-finalgrade/:quizId', authenticated, async(req,res)=>{
       const studentId = decodedTokenInfo.id;
       const {quizId} = req.params;
       const {finalGrade} = req.body;
+      //let's check if the student already attempted this quiz
+        const findGradeOfStudentWhoAttemptedThisQuiz = await Grade.findOne({quizId}, {studentId});
+        if(findGradeOfStudentWhoAttemptedThisQuiz){
+          return res.status(400).json({
+            success:false,
+            message: 'You already attempted this quiz , try another quiz'
+          })
+        }
       const newlyCreatedGrade = await Grade.create({studentId, quizId, finalGrade});
       if(newlyCreatedGrade){
         return res.status(201).json({
