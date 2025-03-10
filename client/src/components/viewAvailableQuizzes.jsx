@@ -7,7 +7,7 @@ import SingleQuizTile from "./SingleQuizTile";
 
 const ViewAvailableQuizzes = () =>{
 
-    const {quizzes, setQuizzes, config} = useContext(QuizContext);
+    const {quizzes, setQuizzes,hasCreatedQuiz, config} = useContext(QuizContext);
     
     const getQuizURL = 'http://127.0.0.1:3000/quiz/get-quizzes';
 
@@ -20,7 +20,7 @@ const ViewAvailableQuizzes = () =>{
                 })
                 .catch(error => console.log(error.response?.data));
         }
-    }, [config]);
+    }, [config, quizzes, hasCreatedQuiz]);
 
     return <div className="p-3 m-3">
          <h2 className="text-3xl">Available Quizzes</h2>

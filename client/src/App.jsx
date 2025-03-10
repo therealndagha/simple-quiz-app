@@ -5,6 +5,7 @@ import { Routes , Route} from "react-router-dom"
 import RegisterUser from "./components/register"
 import Admin from "./components/admin"
 import AttemptQuiz from "./components/attemptQuiz"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
    
@@ -17,7 +18,11 @@ function App() {
             <Route path = '/dashboard' element ={<Dashboard/>} />
             <Route path="/add-questions/:quizId" element={<AddQuestions/>}/>
             <Route path="/register" element={<RegisterUser/>}/>
-            <Route path="/admin" element ={<Admin/>} />
+            <Route path="/admin" element ={
+               <ProtectedRoute>
+                    <Admin/>
+               </ProtectedRoute>
+            }/>
             <Route path="/attempt-quiz/:quizId" element={<AttemptQuiz/>}/>
         </Routes>
       </div>

@@ -84,7 +84,7 @@ const loginUser = async (req,res)=>{
         }
          
         const accessToken = jwt.sign({id: findUser._id, role: findUser.role, email: findUser.email }, process.env.JWT_SECRET_KEY, {expiresIn: '1500m'});
-
+         
         return res.status(200).json({
             success:true,
             message:'user authenticated',

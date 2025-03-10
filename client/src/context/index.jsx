@@ -16,7 +16,8 @@ const QuizContextProvider = ({children}) =>{
        const [questions, setQuestions] = useState([]);
        const [totalPoints, setTotalPoints] = useState(0);
        const [finalGrade, setFinalGrade] = useState(0);    
-   
+       const [hasCreatedQuiz, setHasCreatedQuiz] = useState(false);
+
        useEffect(() => {
         const getTokenFromLocalStorage = localStorage.getItem('accessToken');
         if (!getTokenFromLocalStorage) {
@@ -53,16 +54,21 @@ const QuizContextProvider = ({children}) =>{
         const url = 'http://127.0.0.1:3000/quiz/quizzes';
         axios.post(url, createQuizFormData, config).then(response =>{
             alert('quiz created successfully')
-            
+            setHasCreatedQuiz(true)
             console.log(response.data)
-        }).catch(error => console.log(error.response.data))
+        }).catch(error => {
+            console.log(error.response.data)
+            alert(error.response.data.message)
+            setHasCreatedQuiz(false)
+         }
+            
+        )
         
     }
 
     
-
     return (
-        <QuizContext.Provider value={{submitCreateQuizFormData,questions, setQuestions, handleOnChangeCreateQuizFormData, createQuizFormData, config, quizzes, setQuizzes, navigate, currentQuiz, setCurrentQuiz, totalPoints, setTotalPoints, finalGrade, setFinalGrade}}>
+        <QuizContext.Provider value={{submitCreateQuizFormData, hasCreatedQuiz,  questions, setQuestions, handleOnChangeCreateQuizFormData, createQuizFormData, config, quizzes, setQuizzes, navigate, currentQuiz, setCurrentQuiz, totalPoints, setTotalPoints, finalGrade, setFinalGrade}}>
             {children}
         </QuizContext.Provider>
     )

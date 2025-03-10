@@ -11,12 +11,17 @@ const Grade = require('../models/grade');
 const router = express.Router();
 
 
-router.get('/protected', authenticated, roleChecker ,async(req, res)=>{
-     res.status(200).json({
-      success:true,
-      message: 'admin route reached.'
-     })
+router.get('/protected', authenticated, roleChecker, async (req, res) => {
+
+  
+
+  res.status(200).json({
+      success: true,
+      message: 'Admin route reached.'
+  });
 });
+
+
 
 // Create a new question
 router.post("/questions",authenticated, roleChecker, async (req, res) => {
@@ -71,6 +76,13 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
   router.post("/quizzes", authenticated, roleChecker, async (req, res) => {
     try {
       const { title, description } = req.body;
+      const findQuiz = await Quiz.findOne({title, description});
+      if(findQuiz){
+        return res.status(400).json({
+          success: false,
+          message: 'quiz was already added please add another one.'
+        })
+      }
       const newQuiz = new Quiz({ title, description });
       await newQuiz.save();
       res.status(201).json({ message: "Quiz created", newQuiz });
@@ -200,5 +212,11 @@ router.post('/submit-finalgrade/:quizId', authenticated, async(req,res)=>{
     }
 })
 
+router.get('history', authenticated, async(req,res)=>{
+  const decodedTokenInfo = req.user;
+  const studentId = decodedTokenInfo.id;
+  const quizListAttemptedByThis = await Result.find({studentId}, {quizId: 1});
+  
+})
 
 module.exports = router;

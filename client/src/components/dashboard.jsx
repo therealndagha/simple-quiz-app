@@ -10,7 +10,7 @@ import { QuizContext } from "../context";
 
 const Dashboard = () =>{
     
-  const {navigate} = useContext(QuizContext);
+  const {navigate , checkAdminAccess} = useContext(QuizContext);
        const logoutUser = () =>{
         localStorage.removeItem('accessToken');
         navigate('/')

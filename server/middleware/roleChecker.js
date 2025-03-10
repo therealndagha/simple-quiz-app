@@ -1,20 +1,22 @@
+const roleChecker = (req, res, next) => {
+    console.log("User inside roleChecker:", req.user); // Debugging
 
-
-
-const roleChecker = (req,res,next)=>{
-    const decodedTokenInfo = req.user;
-    if(decodedTokenInfo.role !== 'admin'){
+    if (!req.user) {
         return res.status(401).json({
-            success:false,
-            message: 'Access denied , you are not an admin.'
-        })
+            success: false,
+            message: 'No user found in request. Ensure authenticated middleware is running before roleChecker.'
+        });
     }
 
-    next()
+    if (req.user.role !== 'admin') {
+        return res.status(401).json({
+            success: false,
+            message: `Access denied, you are not an admin. Your role: ${req.user.role}`
+        });
+    }
+
+    next();
+};
 
 
-
-}
-
-
-module.exports = roleChecker
+module.exports = roleChecker;
