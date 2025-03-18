@@ -1,96 +1,89 @@
-import { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { QuizContext } from '../context';
 
-const ViewHistory = () => {
-    const [grades, setGrades] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const { config } = useContext(QuizContext);
+import { useState, useEffect, useContext } from "react";
+import {QuizContext} from '../context'
+import axios from "axios";
 
-    useEffect(() => {
-        const fetchGrades = async () => {
+
+const SingleGradeTile = ({singleGrade}) =>{
+    //console.log(singleGrade)
+    const [singleQuiz, setSingleQuiz] = useState({})
+    useEffect(()=>{
+        const fetchData = async() => {
             try {
-                const response = await axios.get('http://127.0.0.1:3000/quiz/history', {
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem('accessToken'))}`
-                  }
-                });
-                if (response.data.success) {
-                    setGrades(response.data.getGrades);
-                } else {
-                    alert(response.data.message);
+                const response = await  axios(`http://127.0.0.1:3000/quiz/${singleGrade.quizId}`);
+                if(response.data){
+                    //console.log(response.data)
+                    setSingleQuiz(response.data.quiz)
                 }
             } catch (error) {
-                console.error('Error fetching grades:', error);
-                alert('Error fetching quiz history.');
-            } finally {
-                setLoading(false);
+                console.log(error.response.data.message)
             }
-        };
+        }
+        fetchData()
+    }, [])
+    return <div className="p-3 m-3 shadow-md border border-slate-200">
+           <div className="flex flex-row justify-around p-5">
+             <h2>{singleQuiz.title}</h2> <h2>{singleGrade.finalGrade}</h2>
+           </div>
+    </div>
+}
 
-        fetchGrades();
-    }, [config]);
+const ViewHistory = () => {
+    
+    const [loading, setLoading] = useState(true);
+    const [grades, setGrades] = useState(null);
+    const [errMsg, setErrMsg] = useState(null)
+    const configurations = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('accessToken'))}`
+        }
+    }
+   
+    
+    useEffect(()=>{
+         const fetchData = async () => {
+            try {
+                setLoading(true)
+                const response = await axios.get('http://127.0.0.1:3000/quiz/history', configurations);
+                if(response.data){
+                    setGrades(response.data.getGrades)
+                   // console.log(response.data);
+                    
+                    setErrMsg(null)
+                }
+            } catch (error) {
+                console.log(error.response.data)
+                setLoading(false)
+                setGrades(null)
+                setErrMsg(error.response.data.message)
+            }
+             finally{
+                setLoading(false)
 
-    if (loading) return <p>Loading your quiz history...</p>;
+             }
+         }
 
-    if (grades.length === 0) return <p>No quiz history available. Try attempting a quiz!</p>;
+          fetchData()
+
+    }, [])
 
     return (
         <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Your Quiz History</h2>
-            {grades.map((grade) => (
-                <div key={grade._id} className="border p-4 mb-4 rounded-lg shadow">
-                    <p><strong>Quiz ID:</strong> {grade.quizId?._id || 'Unknown'}</p>
-                    <p><strong>Score:</strong> {grade.finalGrade}</p>
-                    <ViewAnswers quizId={grade.quizId?._id} />
-                </div>
-            ))}
-        </div>
-    );
-};
-
-const ViewAnswers = ({ quizId }) => {
-    const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const { config } = useContext(QuizContext);
-
-    useEffect(() => {
-        const fetchResults = async () => {
-            try {
-                const response = await axios.get(`http://127.0.0.1:3000/quiz/results/${quizId}`, config);
-                if (response.data.success) {
-                    setResults(response.data.results);
-                } else {
-                    alert(response.data.message);
-                }
-            } catch (error) {
-                console.error('Error fetching results:', error);
-                alert('Error fetching answers.');
-            } finally {
-                setLoading(false);
+            <h2 className="text-2xl font-bold mb-4 text-blue-800">Your Quiz History</h2>
+            {
+                loading ? <p>loading data please wait...👌</p> : null
             }
-        };
-
-        fetchResults();
-    }, [quizId, config]);
-
-    if (loading) return <p>Loading answers...</p>;
-
-    if (results.length === 0) return <p>No answers available for this quiz.</p>;
-
-    return (
-        <div className="mt-4">
-            <h3 className="text-lg font-semibold">Your Answers:</h3>
-            {results.map((result) => (
-                <div key={result._id} className="p-2 border rounded mt-2">
-                    <p><strong>Question:</strong> {result.questionText || 'Unknown'}</p>
-                    <p><strong>Your Answer:</strong> {result.submittedAnswer}</p>
-                    <p><strong>Correct:</strong> {result.hasPassedThisQuestion ? 'Yes' : 'No'}</p>
-                </div>
-            ))}
+            {
+                errMsg ? <p>{errMsg}</p> : null
+            }
+            {
+                grades && grades?.length > 0 ? grades.map(singleGrade => <SingleGradeTile key={singleGrade?._id} singleGrade={singleGrade} /> ) : null 
+            }
         </div>
     );
 };
+
+ 
 
 export default ViewHistory;

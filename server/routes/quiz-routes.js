@@ -131,6 +131,7 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
       res.status(500).json({ message: "Error submitting answer", error });
     }
   });
+
 // Always place the more specific route first
 router.get('/history', authenticated, async (req, res) => {
   const decodedTokenInfo = req.user;
@@ -277,31 +278,6 @@ router.post('/submit-finalgrade/:quizId', authenticated, async(req,res)=>{
 })
 
 
-router.get('/history', authenticated, async (req, res) => {
-  try {
-    const studentId = req.user.id;
-
-    const grades = await Grade.find({ studentId }).populate('quizId', 'title description');
-
-    if (grades.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'No quiz attempts found. Please attempt a quiz.',
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      grades,
-    });
-  } catch (error) {
-    console.error('Error fetching quiz history:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error fetching quiz history.',
-    });
-  }
-});
 
 // GET /quiz/results/:quizId - Fetch user's answers for a specific quiz
 router.get('/results/:quizId', authenticated, async (req, res) => {
