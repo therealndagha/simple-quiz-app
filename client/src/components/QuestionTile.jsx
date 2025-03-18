@@ -38,7 +38,10 @@ const QuestionTile = ({ singleQuestion }) => {
                 Authorization: `Bearer ${JSON.parse(localStorage.getItem('accessToken'))}`
             }
         }).then(response => console.log(response.data))
-          .catch(error => console.log(error.response.data));
+          .catch(error => {
+            console.log(error.response.data)
+            alert(`${error.response.data.message}`)
+        });
     };
 
     return (
