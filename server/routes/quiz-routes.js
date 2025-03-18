@@ -311,4 +311,33 @@ router.get('/results/:quizId', authenticated, async (req, res) => {
   }
 });  
 
+// GET /quiz/single-result/:questionId/:quizId
+router.get('/single-result/:questionId/:quizId', authenticated, async (req, res) => {
+  try {
+    const studentId = req.user.id; // Ensure you extract this from the authenticated token
+    const { quizId, questionId } = req.params;
+
+    // Find the result for this student, quiz, and question
+    const findResult = await Result.findOne({ studentId, questionId, quizId });
+
+    if (!findResult) {
+      return res.status(404).json({
+        success: false,
+        message: "Result not found for this question",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Here is the result",
+      findResult,
+    });
+  } catch (error) {
+    console.error("Error fetching result:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
+
+
+
 module.exports = router;
