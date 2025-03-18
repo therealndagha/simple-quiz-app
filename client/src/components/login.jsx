@@ -95,7 +95,16 @@ const Login = () => {
       </form>
 
       <div className="text-center">
-         <button onClick={()=>navigate('/register')} className="text-blue-500 mt-3">Don't have an account ? Click Here</button>
+      <button
+  onClick={() => {
+    console.log('Navigating to /register');
+    navigate('/register');
+  }}
+  className="text-blue-500 hover:text-blue-800 mt-3"
+>
+  Don't have an account? Click Here
+</button>
+
       </div>
 
     </div>

@@ -8,7 +8,6 @@ import SingleQuizTile from "./SingleQuizTile";
 const ViewAvailableQuizzes = () =>{
 
     const {quizzes, setQuizzes,hasCreatedQuiz, config} = useContext(QuizContext);
-    
     const getQuizURL = 'http://127.0.0.1:3000/quiz/get-quizzes';
 
     useEffect(() => {

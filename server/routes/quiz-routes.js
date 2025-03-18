@@ -9,6 +9,7 @@ const Quiz = require('../models/quiz');
 const Result = require('../models/results');
 const Grade = require('../models/grade');
 const router = express.Router();
+const mongoose = require('mongoose')
 
 
 router.get('/protected', authenticated, roleChecker, async (req, res) => {
@@ -113,6 +114,8 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
     }
   })
 
+   
+
  //submit an answer  
   router.post("/submit-answer", async (req, res) => {
     try {
@@ -128,6 +131,67 @@ router.get("/questions/:quizId", authenticated, async (req, res) => {
       res.status(500).json({ message: "Error submitting answer", error });
     }
   });
+// Always place the more specific route first
+router.get('/history', authenticated, async (req, res) => {
+  const decodedTokenInfo = req.user;
+  const studentId = decodedTokenInfo.id;
+
+  try {
+    const getGrades = await Grade.find({ studentId });
+
+    if (getGrades.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'You have not attempted any quiz yet. Please attempt a quiz.',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      getGrades,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Something went wrong while trying to get your grades.',
+    });
+  }
+});
+
+// Dynamic route for fetching a single quiz
+router.get('/:quizId', async (req, res) => {
+  try {
+    const { quizId } = req.params;
+
+    if (!mongoose.isValidObjectId(quizId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid quiz ID format',
+      });
+    }
+
+    const findSingleQuiz = await Quiz.findById(quizId);
+
+    if (!findSingleQuiz) {
+      return res.status(404).json({
+        success: false,
+        message: 'Could not find quiz',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      quiz: findSingleQuiz,
+    });
+  } catch (error) {
+    console.error('Error fetching quiz:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error getting single quiz',
+    });
+  }
+});
 
 
 
@@ -212,11 +276,63 @@ router.post('/submit-finalgrade/:quizId', authenticated, async(req,res)=>{
     }
 })
 
-router.get('history', authenticated, async(req,res)=>{
-  const decodedTokenInfo = req.user;
-  const studentId = decodedTokenInfo.id;
-  const quizListAttemptedByThis = await Result.find({studentId}, {quizId: 1});
-  
-})
+
+router.get('/history', authenticated, async (req, res) => {
+  try {
+    const studentId = req.user.id;
+
+    const grades = await Grade.find({ studentId }).populate('quizId', 'title description');
+
+    if (grades.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No quiz attempts found. Please attempt a quiz.',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      grades,
+    });
+  } catch (error) {
+    console.error('Error fetching quiz history:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error fetching quiz history.',
+    });
+  }
+});
+
+// GET /quiz/results/:quizId - Fetch user's answers for a specific quiz
+router.get('/results/:quizId', authenticated, async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const studentId = req.user.id;
+
+    // Get user's answers for the specified quiz
+    const results = await Result.find({ quizId, studentId })
+      .populate('questionId', 'questionText options correctAnswer')
+      .populate('quizId', 'title description');
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No results found for this quiz.',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      quiz: results[0].quizId,
+      results,
+    });
+  } catch (error) {
+    console.error('Error fetching quiz results:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error fetching quiz results.',
+    });
+  }
+});  
 
 module.exports = router;

@@ -48,6 +48,7 @@ const RegisterUser = () =>{
     }
 
     useEffect(()=>{
+        console.log('✅ RegisterUser component mounted');
         if(registerFormData.password1 === registerFormData.password2){
               setPasswordsMatch(true)
               setRegisterFormData({...registerFormData, password: registerFormData.password1})
@@ -56,6 +57,9 @@ const RegisterUser = () =>{
             setPasswordsMatch(false)
             setRegisterFormData({...registerFormData, password : ''})
         }
+        return () => {
+            console.log('❌ RegisterUser component unmounted');
+          };
     }, [registerFormData?.password1, registerFormData?.password2])
 
     return <div className="text-center p-3 m-3 shadow border">

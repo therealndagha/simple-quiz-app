@@ -22,6 +22,10 @@ const Dashboard = () =>{
             <div className="text-center">
                 <a onClick={()=>navigate('/admin')} className="bg-orange-400 rounded text-white px-3 hover:bg-orange-600">Go To Admin Dashboard</a>
             </div>
+
+            <div className="text-center">
+                 <a onClick={()=>navigate('/history')}>View my grades</a>
+            </div>
               <UserAccessQuizzes/>
             <div className="text-center">
                  <button onClick={logoutUser} className="bg-blue-600 hover:bg-blue-900 mx-4 p-3 text-white rounded">Log Out</button>

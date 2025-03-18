@@ -107,6 +107,7 @@ const AddQuestions = () => {
       const response = await axios.post(addQuestions_url, requestData, config);
       
       console.log("Response:", response.data);
+      alert(response.data.message)
       setErrMessage(null)
     } catch (error) {
       console.error(

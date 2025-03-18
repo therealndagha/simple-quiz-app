@@ -1,24 +1,28 @@
 
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { QuizContext } from "../context";
 import axios from 'axios'
 const UserAccessQuizzes = () =>{
     
 
     const {quizzes, setQuizzes, config, navigate, setCurrentQuiz} = useContext(QuizContext);
-    
+    const [loading, setLoading] = useState(false)
     const getQuizURL = 'http://127.0.0.1:3000/quiz/get-quizzes';
-
+    
     useEffect(() => {
         if (config.headers?.Authorization) {
+            setLoading(true); // Start loading before fetching
             axios.get(getQuizURL, config)
                 .then(response => {
                     setQuizzes(response?.data.quizList);
-                    //console.log(response.data);
                 })
-                .catch(error => console.log(error.response?.data));
+                .catch(error => {
+                    console.error("Error fetching quizzes:", error.response?.data);
+                })
+                .finally(() => setLoading(false)); // Ensure loading stops
         }
     }, [config]);
+    
 
     const attemptQuiz = (quiz) =>{
         setCurrentQuiz(quiz)
@@ -28,8 +32,12 @@ const UserAccessQuizzes = () =>{
 
     return <>
          <div className="p-3 m-3">
+            {
+                loading ? <p>loading data please wait...</p> : null
+            }
              
                 {
+                     
                     quizzes && quizzes?.length > 0 ? quizzes.map( singleQuiz =>
                         <div key={singleQuiz?._id} className="flex flex-row justify-around p-5 m-3 shadow border border-slate-100">
                               <div  className="">

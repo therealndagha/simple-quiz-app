@@ -1,48 +1,34 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null);
-    const navigate = useNavigate();
-    
-    const token = localStorage.getItem('accessToken');
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const token = localStorage.getItem("accessToken");
+
+  useEffect(() => {
     if (!token) {
-        return <Navigate to="/" />;
+      setIsAuthenticated(false);
+      return;
     }
 
-    const parsedToken = JSON.parse(token);
+    const fetchAuth = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:3000/quiz/protected", {
+          headers: { Authorization: `Bearer ${JSON.parse(token)}` },
+        });
+        setIsAuthenticated(response.status === 200);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
 
-    useEffect(() => {
-        const accessProtectedRoute = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:3000/quiz/protected', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${parsedToken}`
-                    }
-                });
+    fetchAuth();
+  }, [token]);
 
-                if (response.status === 200) {
-                    setIsAuthenticated(true);
-                } else {
-                    setIsAuthenticated(false);
-                    navigate('/dashboard');  // Redirect to dashboard if not authorized
-                }
-            } catch (error) {
-                setIsAuthenticated(false);
-                navigate('/dashboard');  // Redirect on error
-            }
-        };
+  if (isAuthenticated === null) return <p>Loading...</p>;
 
-        accessProtectedRoute();
-    }, [navigate, parsedToken]);
-
-    if (isAuthenticated === null) {
-        return <p>Loading...</p>;  // Show a loading state while checking auth
-    }
-
-    return isAuthenticated ? children : <Navigate to="/dashboard" />;
+  return isAuthenticated ? children : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;
