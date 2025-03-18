@@ -16,6 +16,12 @@ const QuizContextProvider = ({ children }) => {
     const [finalGrade, setFinalGrade] = useState(0);
     const [hasCreatedQuiz, setHasCreatedQuiz] = useState(false);
 
+
+    const [obj,setObj] = useState({
+        title: '',
+        grade: ''
+    });
+
     useEffect(() => {
         const getTokenFromLocalStorage = localStorage.getItem('accessToken');
         if (!getTokenFromLocalStorage && window.location.pathname !== '/register') {
@@ -59,6 +65,12 @@ const QuizContextProvider = ({ children }) => {
             });
     };
 
+    const logOut = () =>{
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('obj');
+          navigate('/')
+    }
+
     return (
         <QuizContext.Provider value={{
             submitCreateQuizFormData,
@@ -76,7 +88,10 @@ const QuizContextProvider = ({ children }) => {
             totalPoints,
             setTotalPoints,
             finalGrade,
-            setFinalGrade
+            setFinalGrade,
+            obj,
+            setObj,
+            logOut
         }}>
             {children}
         </QuizContext.Provider>

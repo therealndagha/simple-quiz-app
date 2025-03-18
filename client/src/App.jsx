@@ -9,11 +9,10 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import ViewQuizHistory from "./components/viewQuizHistory"
 import { useEffect } from "react"
 import TestPage from "./components/testPage"
+import ViewHistoryOfAQuiz from "./components/ViewHistoryOfAQuiz"
 
 function App() {
-  useEffect(() => {
-    console.log("📌 Current Path:", window.location.pathname);
-  }, []);
+  
   
   return (
     <>
@@ -25,12 +24,13 @@ function App() {
             <Route path="/add-questions/:quizId" element={<AddQuestions/>}/>
             <Route path="/register" element={<RegisterUser/>}/>
             <Route path="/history" element={<ViewQuizHistory/>} />
+            <Route path="/history/:quizId" element={<ViewHistoryOfAQuiz/>}/>
             <Route path="/test" element={<TestPage/>}/>
-           {/* <Route path="/admin" element ={
+            <Route path="/admin" element ={
                <ProtectedRoute>
                     <Admin/>
                </ProtectedRoute>
-            }/> */}
+            }/> 
             <Route path="/attempt-quiz/:quizId" element={<AttemptQuiz/>}/>
             <Route path="*" element={<h1>Page Not Found</h1>} />
 
