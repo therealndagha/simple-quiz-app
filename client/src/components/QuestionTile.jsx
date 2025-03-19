@@ -8,6 +8,7 @@ const QuestionTile = ({ singleQuestion }) => {
     const submitResultURL = `http://127.0.0.1:3000/quiz/submit-result/${singleQuestion?._id}`;
     const { totalPoints, setTotalPoints } = useContext(QuizContext);
     const [isClicked, setIsClicked] = useState(false);
+    const [captureAnswer, setCaptureAnswer] = useState(null)
 
     // Reset points when component mounts
     useEffect(() => {
@@ -17,7 +18,7 @@ const QuestionTile = ({ singleQuestion }) => {
     const selectedAnswer = (userSelectedAnswer) => {
         setIsClicked(true);
         const { correctAnswer } = singleQuestion;
-
+         setCaptureAnswer(userSelectedAnswer)
         if (userSelectedAnswer === correctAnswer) {
             hasPassedThisQuestion = true;
             setTotalPoints(prevTotalPoints => prevTotalPoints + 1);
@@ -51,8 +52,9 @@ const QuestionTile = ({ singleQuestion }) => {
                 {singleQuestion?.options?.length > 0 && singleQuestion.options.map(singleOption => (
                     <div key={singleOption}>
                         <button
-                            className="hover:bg-slate-50 p-3 m-3"
+                            className={ !isClicked ?  `hover:bg-slate-50 p-3 m-3` : `p-3 m-3` }
                             onClick={() => selectedAnswer(singleOption)}
+                            style={{backgroundColor: captureAnswer  === singleOption ? 'black' : 'inherit', color: captureAnswer ===singleOption ? 'white' : 'inherit' }}
                             disabled={isClicked}
                         >
                             {singleOption}

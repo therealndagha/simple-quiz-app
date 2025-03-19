@@ -4,9 +4,10 @@ import { QuizContext } from "../context";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import QuestionTile from "./QuestionTile";
+import LogOutuser from "./logOut";
 
 const AttemptQuiz = () => {
-    const { currentQuiz, questions, setQuestions, config, totalPoints, finalGrade, setFinalGrade } = useContext(QuizContext);
+    const { currentQuiz, questions, setQuestions, config, totalPoints, finalGrade, setFinalGrade, navigate } = useContext(QuizContext);
     const [readyToSubmit, setReadyToSubmit] = useState(false);
 
     const params = useParams();
@@ -47,7 +48,10 @@ const AttemptQuiz = () => {
                     alert(`Your grade is: ${response.data.newlyCreatedGrade.finalGrade}, ${examStatus}`);
                     localStorage.removeItem(`questions_${params.quizId}`); // Clear questions after submission
                 })
-                .catch(error => console.error("Error submitting grade: ", error.response?.data));
+                .catch(error => {
+                    console.error("Error submitting grade: ", error.response?.data)
+                    alert(error.response.data.message)
+                });
 
             setFinalGrade(newGradeFinal);
             setReadyToSubmit(false);
@@ -56,7 +60,13 @@ const AttemptQuiz = () => {
 
     return (
         <div className="p-3 m-3">
-            <h1 className="text-2xl">Attempt Quiz: {currentQuiz?.title}</h1>
+             <div className="flex flex-row justify-between my-3">
+               <h1 className="text-2xl">Attempt Quiz: {currentQuiz?.title}</h1>
+               <div>
+                 <button onClick={()=>navigate('/dashboard')} className="bg-violet-500 text-white px-3 rounded hover:bg-violet-700">Dashboard</button>
+               </div>
+             </div>
+            
             {questions && questions.length > 0
                 ? questions.map(singleQuestion => (
                     <QuestionTile key={singleQuestion?._id} singleQuestion={singleQuestion} />
@@ -68,6 +78,7 @@ const AttemptQuiz = () => {
                     Submit For Grading
                 </button>
             </div>
+            <LogOutuser/>
         </div>
     );
 };
