@@ -85,6 +85,7 @@ const ViewHistory = () => {
 
     const logOut = () =>{
        localStorage.removeItem('accessToken');
+       localStorage.removeItem('obj')
        navigate('/')
     }
 

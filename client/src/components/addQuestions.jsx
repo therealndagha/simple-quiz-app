@@ -108,6 +108,7 @@ const AddQuestions = () => {
       
       console.log("Response:", response.data);
       alert(response.data.message)
+      
       setErrMessage(null)
     } catch (error) {
       console.error(

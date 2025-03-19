@@ -251,8 +251,15 @@ router.post('/submit-finalgrade/:quizId', authenticated, async(req,res)=>{
       const studentId = decodedTokenInfo.id;
       const {quizId} = req.params;
       const {finalGrade} = req.body;
+      if (!studentId || !quizId || !finalGrade) {
+        return res.status(400).json({
+          success: false,
+          message: 'All fields are required.',
+        });
+      }
       //let's check if the student already attempted this quiz
-        const findGradeOfStudentWhoAttemptedThisQuiz = await Grade.findOne({quizId}, {studentId});
+        
+        const findGradeOfStudentWhoAttemptedThisQuiz = await Grade.findOne({studentId, quizId});
         if(findGradeOfStudentWhoAttemptedThisQuiz){
           return res.status(400).json({
             success:false,
