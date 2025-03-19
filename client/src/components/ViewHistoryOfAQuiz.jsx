@@ -109,6 +109,12 @@ const ViewHistoryOfAQuiz = () => {
                       ? "Passed"
                       : "Failed"}
                   </p>
+                  {/* Display correct answer if the user failed */}
+                  {!questionResults[singleQuestion._id].hasPassedThisQuestion && (
+                    <p className="text-red-600">
+                      ❌ Correct Answer: {singleQuestion.correctAnswer}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <p className="text-gray-500">🕵️ Result not available for this question</p>
