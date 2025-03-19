@@ -1,96 +1,136 @@
-import axios from 'axios'
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-const RegisterUser = () =>{
 
-    const navigate = useNavigate();
+const RegisterUser = () => {
+  const navigate = useNavigate();
 
-    const [registerFormData, setRegisterFormData] = useState({
-        fullname: '',
-        email: '',
-        password: '',
-        password1: '',
-        password2: '',
-    })
-     
-    const [errMessage, setErrMessage] = useState(null);
+  const [registerFormData, setRegisterFormData] = useState({
+    fullname: '',
+    email: '',
+    password: '',
+    password1: '',
+    password2: '',
+  });
 
-    //console.log(registerFormData)
+  const [errMessage, setErrMessage] = useState(null);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
-    const [passwordsMatch, setPasswordsMatch] = useState(true)
+  const register_api_url = 'http://127.0.0.1:3000/auth/register';
 
-    const register_api_url = 'http://127.0.0.1:3000/auth/register'
-   
-    const handleRegisterFormDataOnChange = (event) =>{
-        const {name, value} = event.target;
-        setRegisterFormData({...registerFormData, [name]:value})
+  const handleRegisterFormDataOnChange = (event) => {
+    const { name, value } = event.target;
+    setRegisterFormData({ ...registerFormData, [name]: value });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const { fullname, email, password } = registerFormData;
+
+    const data = { fullname, email, password, role: 'student' };
+
+    try {
+      await axios.post(register_api_url, data);
+      setErrMessage(null);
+      navigate('/');
+    } catch (error) {
+      console.error('Error:', error.response?.data);
+      setErrMessage(error.response?.data?.message);
     }
+  };
 
-    const handleSubmit =  (event) =>{
-        event.preventDefault()
-        const {fullname, email, password} = registerFormData;
-        const data = {
-            fullname,
-            email, 
-            password, 
-            role: 'student'
-        }
-        //console.log(data);
-       
-        axios.post(register_api_url, data).then(response => {
-            console.log(response.data);
-            setErrMessage(null)
-            navigate('/');
-        }).catch(error => {
-            console.error('Error:',error.response.data );
-           setErrMessage(error.response.data.message)
-        })
+  useEffect(() => {
+    if (registerFormData.password1 === registerFormData.password2) {
+      setPasswordsMatch(true);
+      setRegisterFormData({ ...registerFormData, password: registerFormData.password1 });
+    } else {
+      setPasswordsMatch(false);
+      setRegisterFormData({ ...registerFormData, password: '' });
     }
+  }, [registerFormData.password1, registerFormData.password2]);
 
-    useEffect(()=>{
-        console.log('✅ RegisterUser component mounted');
-        if(registerFormData.password1 === registerFormData.password2){
-              setPasswordsMatch(true)
-              setRegisterFormData({...registerFormData, password: registerFormData.password1})
-        }
-        else{
-            setPasswordsMatch(false)
-            setRegisterFormData({...registerFormData, password : ''})
-        }
-        return () => {
-            console.log('❌ RegisterUser component unmounted');
-          };
-    }, [registerFormData?.password1, registerFormData?.password2])
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 p-4">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl rounded-2xl">
+        <h2 className="text-4xl font-bold text-center text-gray-800">Register</h2>
 
-    return <div className="text-center p-3 m-3 shadow border">
-         <h2 className="text-2xl">Register</h2>
-         <form onSubmit={handleSubmit}>
+        {errMessage && <p className="text-red-500 bg-red-100 text-center p-2 rounded-lg">{errMessage}</p>}
 
-         <div className="m-3 p-3 shadow border"><input onChange={handleRegisterFormDataOnChange} type="text" name='fullname' value={registerFormData.fullname} placeholder='Enter your fullname' className="m-3 p-3" required /></div>
-         <div className="m-3 p-3 shadow border"><input  onChange={handleRegisterFormDataOnChange} type="email" className="m-3 p-3" name='email' value={registerFormData.email} placeholder='Enter your email'  required/></div>
-         <div className="m-3 p-3 shadow border"><input  onChange={handleRegisterFormDataOnChange} type="password" className="m-3 p-3"  name='password1' value={registerFormData.password1} placeholder='Enter a password' required /></div>
-         <div className="m-3 p-3 shadow border"><input  onChange={handleRegisterFormDataOnChange} type="password" className="m-3 p-2 text-center " required value={registerFormData.password2} name='password2' placeholder='Re-enter password'/></div>
-
-         <div>
-            {
-                !passwordsMatch ? <p className="text-red-500">passwords do not match</p> : null
-            }
-         </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-gray-700">Full Name</label>
+            <input
+              type="text"
+              name="fullname"
+              value={registerFormData.fullname}
+              onChange={handleRegisterFormDataOnChange}
+              placeholder="Enter your fullname"
+              required
+              className="mt-1 w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           <div>
-            <button type='submit' className='bg-blue-500 text-white rounded px-2 mx-2 hover:bg-blue-900'>register</button>
+            <label className="block text-gray-700">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={registerFormData.email}
+              onChange={handleRegisterFormDataOnChange}
+              placeholder="Enter your email"
+              required
+              className="mt-1 w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-         </form>
-        <div>
-            { 
-                errMessage ? <p className='text-red-500 mt-3'>{errMessage}</p> : null
-            }
-        </div>
-        <div className="text-center">
-             <a onClick={()=>navigate('/')} className='mt-3 text-blue-500'>Already have an account ? Click Here!</a>
-        </div>
-    </div>
-}
 
+          <div>
+            <label className="block text-gray-700">Password</label>
+            <input
+              type="password"
+              name="password1"
+              value={registerFormData.password1}
+              onChange={handleRegisterFormDataOnChange}
+              placeholder="Enter a password"
+              required
+              className="mt-1 w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700">Confirm Password</label>
+            <input
+              type="password"
+              name="password2"
+              value={registerFormData.password2}
+              onChange={handleRegisterFormDataOnChange}
+              placeholder="Re-enter password"
+              required
+              className="mt-1 w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {!passwordsMatch && <p className="text-red-500 text-center">Passwords do not match</p>}
+
+          <button
+            type="submit"
+            className="w-full p-3 mt-4 bg-blue-600 text-white rounded-xl hover:bg-blue-800 transition-all duration-300"
+          >
+            Register
+          </button>
+        </form>
+
+        <p className="text-center text-gray-600">
+          Already have an account?
+          <button
+            onClick={() => navigate('/')}
+            className="text-blue-600 hover:underline ml-1"
+          >
+            Sign in here
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default RegisterUser;

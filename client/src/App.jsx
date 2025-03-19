@@ -16,7 +16,6 @@ function App() {
   
   return (
     <>
-      <h1 className="text-5xl text-center my-3">Simple Quiz App</h1>
       <div className="p-3">
         <Routes>
             <Route path="/" element={<Login/>}/>
